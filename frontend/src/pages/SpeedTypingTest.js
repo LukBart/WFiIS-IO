@@ -5,7 +5,7 @@ import { IconContext } from "react-icons"
 
 import "./GamePanel.css"
 const NUMBER_OF_WORDS = 200
-const TIME = 2.0
+const TIME = 20.0
 
 
 function SpeedTypingTest() {
@@ -21,9 +21,15 @@ function SpeedTypingTest() {
     const [status, setStatus] = useState("waiting")
     const textInput = useRef(null)
 
-    const refreshPage = () => {
+    /* const refreshPage = () => {
         setStatus('waiting')
-    }
+        setWords(generateWords())
+        setCurrWordIndex(0)
+        setCorrect(0)
+        setIncorrect(0)
+        setCurrCharIndex(-1)
+        setCurrChar("")
+    } */
 
     useEffect(() => {
         setWords(generateWords())
@@ -51,19 +57,25 @@ function SpeedTypingTest() {
         }
         if (status !== "started") {
             setStatus("started")
-            let interval = setInterval(() => {
+            var startTime = new Date();
+            let interval =setInterval(() => {
                 setCountDown((prevCountDown) => {
-                    if (prevCountDown < 0.01) {
-                        clearInterval(interval)
+                    if (prevCountDown <= 0.001) {
                         setStatus("finished")
+                        clearInterval(interval)
                         setCurrInput("")
-                        return TIME.toFixed(2)
+                        return TIME.toFixed(3)
                     }
                     else {
-                        return (Math.round((prevCountDown - 0.01) * 100) / 100).toFixed(2)
+                        var currentTime = new Date()
+                            , timeElapsed = new Date(currentTime - startTime)
+                            , sec = timeElapsed.getUTCSeconds()
+                            , ms = timeElapsed.getUTCMilliseconds();
+                        return (TIME - sec -(ms/1000)).toFixed(3)
                     }
                 })
-            }, 10)
+            })
+            
         }
     }
 
@@ -75,6 +87,13 @@ function SpeedTypingTest() {
             setCurrInput("")
             setCurrWordIndex(currWordIndex + 1)
             setCurrCharIndex(-1)
+            /* const element = document.getElementById("myBar"); 
+            let width = 0;
+
+            if (width < 100) {
+                element.style.width = ((currWordIndex+1)/NUMBER_OF_WORDS)*100 + '%';
+            } */
+
         } else if (keyCode === 32) {
             setPrevInput(" ")
             setCurrInput("")
@@ -105,12 +124,12 @@ function SpeedTypingTest() {
     function getCharClass(wordIndex, charIndex, char) {
         if (wordIndex === currWordIndex && charIndex === currCharIndex && currChar && status !== "finished") {
             if (char === currChar) {
-                return 'has-background-success'
+                return 'background-good'
             } else {
-                return 'has-background-danger'
+                return 'background-wrong'
             }
         } else if (wordIndex === currWordIndex && currCharIndex >= words[currWordIndex].length) {
-            return 'has-background-danger'
+            return 'background-wrong'
         } else {
             return ''
         }
@@ -130,6 +149,7 @@ function SpeedTypingTest() {
                 )}
                 {status === "started" && (
                     <div className="section">
+                        {/* <div id="myBar"></div> */}
                         <div className="countDown">
                             <h2>{countDown}</h2>
                         </div>
@@ -141,8 +161,8 @@ function SpeedTypingTest() {
                             </label>
                         </div>
                         <div className="card">
-                            <div className="card-content">
-                                <div className="content">
+                            <div>
+                                <div>
                                     {words.map((word, i) => (
                                         <span key={i}>
                                             <span>
@@ -160,28 +180,28 @@ function SpeedTypingTest() {
                 )}
                 {status === "finished" && (
                     <div className="section">
-                        <div className="columns">
-                            <div className="column has-text-centered">
+                        <div>
+                            <div>
                                 <h3>Results</h3>
-                                <p className="is-size-5">Words per minute:</p>
-                                <p className="has-text-primary is-size-1">
+                                <p>Words per minute:</p>
+                                <p>
                                     {Math.round(correct / (TIME / 60))}
                                 </p>
                             </div>
-                            <div className="column has-text-centered">
-                                <div className="is-size-5"></div>
-                                <p className="is-size-5">Accuracy:</p>
+                            <div>
+                                <div></div>
+                                <p>Accuracy:</p>
                                 {correct !== 0 ? (
-                                    <p className="has-text-info is-size-1">
+                                    <p>
                                         {Math.round((correct / (correct + incorrect)) * 100)}%
                                     </p>
                                 ) : (
-                                    <p className="has-text-info is-size-1">0%</p>
+                                    <p>0%</p>
                                 )}
                             </div>
                         </div>
                         <div className="section">
-                            <button className='replay' onClick={refreshPage}>
+                            <button className='replay' onClick={start}>
                                 {/* Zagraj ponownie */}
                                 <FiIcons.FiRotateCcw />
                             </button>
