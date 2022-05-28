@@ -69,9 +69,10 @@ function SpeedTypingTest() {
                     else {
                         var currentTime = new Date()
                             , timeElapsed = new Date(currentTime - startTime)
+                            , min = timeElapsed.getUTCMinutes()
                             , sec = timeElapsed.getUTCSeconds()
                             , ms = timeElapsed.getUTCMilliseconds();
-                        return (TIME - sec -(ms/1000)).toFixed(3)
+                        return (TIME - (min*60) - sec -(ms/1000)).toFixed(3)
                     }
                 })
             })
