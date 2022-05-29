@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import axios from 'axios'
+import {useNavigate} from "react-router-dom"
 
 
 export default function Register() {
@@ -7,20 +8,41 @@ export default function Register() {
     const [password, setPassword] = useState('')
     const [passwordRep, setPasswordRep] = useState('')
 
+    const navigate=useNavigate()
+
     const registerUser = async () => {
         const dataJson = JSON.stringify({
             username: username,
             password: password
         })
-        const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/register', dataJson, {
-            headers: { 'Content-Type': 'application/json' }
-        }).catch((err) => { console.log('cant find API') })
+        try{
+            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/register', dataJson, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+            if (res.data.status === 'ok'){
+                document.getElementById("email").value = ""
+                document.getElementById("password").value = ""
+                document.getElementById("passwordRepeat").value = ""
+                alert("Zarejestrowałeś się poprawnie. Przeniesiesz się do logowania.")
+                navigate("/login")
+            }
+            
+        }
+        catch (err){
+            document.getElementById("email").value = ""
+            document.getElementById("password").value = ""
+            document.getElementById("passwordRepeat").value = ""
+            alert("Login znajduje się już w bazie!")
+        }
+            
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
         // alert(username + '\n' + password + '\n' + passwordRep + '\n' + (password === passwordRep))
         if (password !== passwordRep) {
+            document.getElementById("password").value = ""
+            document.getElementById("passwordRepeat").value = ""
             alert('Podane hasła nie są jednakowe!')
         }
         else {
