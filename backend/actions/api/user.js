@@ -8,15 +8,15 @@ module.exports = {
     login: async (req, res) => {
         const user = await User.findOne({ username: req.body.username })
         if (!user) {
-            return { status: 'error', error: 'Invalid username' }
+            return res.status(422).json({ status: 'error', error: 'Invalid username' })
         }
         const isPasswordValid = await bcrypt.compare(
             req.body.password,
             user.password
         )
         if (isPasswordValid) {
-            const token = jwt.sign({ username: user.username, password: user.password }, 'hehexd')
-            return res.status(201).json({ status: 'ok', user: token })
+            /*const token = jwt.sign({ username: user.username, password: user.password }, 'hehexd')*/
+            return res.status(201).json({ status: 'ok', user: user.username })
         } else {
             return res.status(422).json({ status: 'error', user: false })
         }
