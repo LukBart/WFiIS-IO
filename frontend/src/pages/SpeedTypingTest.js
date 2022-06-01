@@ -1,14 +1,15 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import randomWords from 'random-words'
 import * as FiIcons from "react-icons/fi"
 import { IconContext } from "react-icons"
-
+import AuthContext from "../pages/context/AuthProvider";
 import "./GamePanel.css"
+import axios from 'axios'
 const NUMBER_OF_WORDS = 200
-const TIME = 20.0
+const TIME = 1.0
 
 
-function SpeedTypingTest() {
+function SpeedTypingTest(props) {
     const [words, setWords] = useState([])
     const [countDown, setCountDown] = useState(TIME.toFixed(2))
     const [currInput, setCurrInput] = useState("")
@@ -20,7 +21,10 @@ function SpeedTypingTest() {
     const [incorrect, setIncorrect] = useState(0)
     const [status, setStatus] = useState("waiting")
     const textInput = useRef(null)
-
+    const { auth } = useContext(AuthContext);
+    const level = useRef(0)
+    const experience = useRef(0);
+    const requiredExperience = [{ level: 1, exp: 0 }, { level: 2, exp: 300 }, { level: 3, exp: 713 }, { level: 4, exp: 200 }, { level: 5, exp: 1741 }, { level: 6, exp: 2326 }, { level: 7, exp: 2947 }, { level: 8, exp: 3600 }, { level: 9, exp: 4279 }, { level: 10, exp: 4982 }]
     /* const refreshPage = () => {
         setStatus('waiting')
         setWords(generateWords())
@@ -46,8 +50,10 @@ function SpeedTypingTest() {
     }
 
     function start() {
-
+        getUserData()
         if (status === "finished") {
+            calculateUserData()
+            updateUserData()
             setWords(generateWords())
             setCurrWordIndex(0)
             setCorrect(0)
@@ -58,9 +64,10 @@ function SpeedTypingTest() {
         if (status !== "started") {
             setStatus("started")
             var startTime = new Date();
-            let interval =setInterval(() => {
+            let interval = setInterval(() => {
                 setCountDown((prevCountDown) => {
                     if (prevCountDown <= 0.001) {
+
                         setStatus("finished")
                         clearInterval(interval)
                         setCurrInput("")
@@ -72,11 +79,12 @@ function SpeedTypingTest() {
                             , min = timeElapsed.getUTCMinutes()
                             , sec = timeElapsed.getUTCSeconds()
                             , ms = timeElapsed.getUTCMilliseconds();
-                        return (TIME - (min*60) - sec -(ms/1000)).toFixed(3)
+                        return (TIME - (min * 60) - sec - (ms / 1000)).toFixed(3)
                     }
                 })
             })
-            
+
+
         }
     }
 
@@ -135,6 +143,94 @@ function SpeedTypingTest() {
             return ''
         }
     }
+    const getUserData = async () => {
+        console.log("getUserData")
+        const dataJson = JSON.stringify({
+            username: auth.username,
+        })
+        try {
+            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/getUserData', dataJson, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+            if (res.data.status === 'ok') {
+                level.current = res.data.user.level;
+                experience.current = res.data.user.experience
+                console.log("getUserData", level, experience)
+            }
+        }
+        catch (err) {
+        }
+    }
+    const updateUserData = async () => {
+        const dataJson = JSON.stringify({
+            username: auth.username,
+            level: level.current,
+            experience: experience.current,
+        })
+
+        try {
+            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/updateUserData', dataJson, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+            if (res.data.status === 'ok') {
+                console.log("update user", dataJson)
+            }
+        }
+        catch (err) {
+        }
+    }
+
+
+    function calculateUserData() {
+        console.log("calculateUserData")
+        var accuracy = correct / (correct + incorrect)
+        var wordsPerMinute = (correct / (TIME / 60))
+        var accuracyBonus = 1.0
+
+        switch (true) {
+            case accuracy > 0.0 && accuracy <= 0.2:
+                accuracyBonus = 0.8
+                break;
+            case accuracy > 0.2 && accuracy <= 0.5:
+                accuracyBonus = 1.0
+                break;
+            case accuracy > 0.5 && accuracy <= 0.7:
+                accuracyBonus = 1.5
+                break;
+            case accuracy > 0.7 && accuracy <= 0.9:
+                accuracyBonus = 2.0
+                break;
+            case accuracy > 0.9 && accuracy <= 1.0:
+                accuracyBonus = 3.0
+                break;
+            default:
+                break;
+
+        }
+        var experienceGained = wordsPerMinute * accuracyBonus
+        experience.current += experienceGained
+        checkIfLeveledUp()
+    }
+
+    function checkIfLeveledUp() {
+        console.log("checkIfLeveledUp")
+        var experienceNeeded
+        var expectedLevel
+        for (let index = 0; index < requiredExperience.length; index++) {
+
+            if (requiredExperience[index].level === level.current) {
+                experienceNeeded = requiredExperience[index + 1].exp
+                expectedLevel = requiredExperience[index + 1].level
+                break;
+            }
+        }
+        if (experience.current >= experienceNeeded) {
+            console.log(expectedLevel)
+            level.current = expectedLevel
+
+        }
+    }
+
 
     return (
         <div className='gamePanel'>
