@@ -12,7 +12,7 @@ export const AuthorizedBarElements = [
     },
     {
         title: "Multiplayer",
-        path: "/logout",
+        path: "/speedTypingTestMultiplayer",
         icon: <FiIcons.FiUsers />,
         cName: "nav-text",
     },
