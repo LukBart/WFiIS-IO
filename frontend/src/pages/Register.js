@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import axios from 'axios'
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 
 export default function Register() {
@@ -8,33 +8,49 @@ export default function Register() {
     const [password, setPassword] = useState('')
     const [passwordRep, setPasswordRep] = useState('')
 
-    const navigate=useNavigate()
+    const navigate = useNavigate()
 
     const registerUser = async () => {
         const dataJson = JSON.stringify({
             username: username,
             password: password
         })
-        try{
+        try {
             const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/register', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })
-            if (res.data.status === 'ok'){
+            if (res.data.status === 'ok') {
                 document.getElementById("email").value = ""
                 document.getElementById("password").value = ""
                 document.getElementById("passwordRepeat").value = ""
                 alert("Zarejestrowałeś się poprawnie. Przeniesiesz się do logowania.")
                 navigate("/login")
             }
-            
+
         }
-        catch (err){
+        catch (err) {
             document.getElementById("email").value = ""
             document.getElementById("password").value = ""
             document.getElementById("passwordRepeat").value = ""
             alert("Login znajduje się już w bazie!")
         }
-            
+
+    }
+
+    const createUserData = async () => {
+        const dataJson = JSON.stringify({
+            username: username,
+            level: 1,
+            experience: 0,
+        })
+        try {
+            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/createUserData', dataJson, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+            console.log(res)
+        }
+        catch (err) {
+        }
     }
 
     const handleSubmit = (e) => {
@@ -47,6 +63,7 @@ export default function Register() {
         }
         else {
             registerUser()
+            createUserData()
         }
     }
 

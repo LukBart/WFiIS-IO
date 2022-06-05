@@ -1,7 +1,8 @@
-import React, {useEffect, useState, useContext } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from 'axios'
 import AuthContext from "./context/AuthProvider"
+
 
 export default function Login(props) {
 
@@ -11,11 +12,10 @@ export default function Login(props) {
     let navigate = useNavigate();
 
     useEffect(() => {
-            if(auth)
-            {
-               navigate("/")
-            }
-        },[auth])
+        if (auth) {
+            navigate("/")
+        }
+    }, [auth])
 
     const logInUser = async () => {
 
@@ -24,15 +24,14 @@ export default function Login(props) {
             password: password
         })
         //!!!
-        try{
+        try {
             const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/login', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })/*.catch((err) => { console.log('cant find API') })*/
-            console.log(JSON.stringify(res.data))
+            // console.log(JSON.stringify(res.data.token))
 
-            if(res)
-            {
-                setAuth(true)
+            if (res) {
+                setAuth(res.data.user)
             }
         }
         catch (err) { alert("Zły login lub hasło!") }
