@@ -167,6 +167,9 @@ function SpeedTypingTestMultiplayer() {
         }
     }
 
+    function generateNewGame() {
+        setWords(generateWords())
+    }
 
     return (
         <div className='gamePanel'>
