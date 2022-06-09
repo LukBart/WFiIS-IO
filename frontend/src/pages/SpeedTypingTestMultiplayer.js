@@ -8,7 +8,7 @@ import "./GamePanel.css"
 
 import AuthContext from "../pages/context/AuthProvider"
 const NUMBER_OF_WORDS = 200
-const TIME = 20.0
+const TIME = 60.0
 
 const socket = io.connect("http://localhost:3002")
 
@@ -128,7 +128,7 @@ function SpeedTypingTestMultiplayer() {
             let interval =setInterval(() => {
                 setCountDown((prevCountDown) => {
                     if (prevCountDown <= 0.001) {
-                        sendWordsCount()
+                        // sendWordsCount()
                         setStatus("finished")
                         clearInterval(interval)
                         setCurrInput("")
@@ -225,7 +225,7 @@ function SpeedTypingTestMultiplayer() {
     }
 
     function GeneratePlayersTable() {
-        const listItems = players.map((usr, idx) => <li key={idx}> {usr} </li>)
+        const listItems = players.map((usr, index) => <li key={index}> {usr} </li>)
         return (
             <><ul> {listItems} </ul></>
         )
@@ -239,7 +239,7 @@ function SpeedTypingTestMultiplayer() {
     function GeneratePlayersWords() {
         const listItems = players.map((usr, index) => {
             if (usr !== auth.username){
-                return <div className = {"p" + toString(index)}> {usr}: {playersWords.get(usr)}</div>
+                return <div key = {"player" + index}> {usr}: {playersWords.get(usr)}</div>
             }
         })
         return (
@@ -273,7 +273,7 @@ function SpeedTypingTestMultiplayer() {
         const playersResult = players.map((usr, index) => {
             if (usr !== auth.username){
                 return (
-                    <div className= {"player" + toString(index)}>
+                    <div className= {"player"}>
                         <div>
                             <h3>{usr} results</h3>
                             <p>Words per minute:</p>
@@ -329,7 +329,7 @@ function SpeedTypingTestMultiplayer() {
                         <h2>{room}</h2>
                         <h3>Current players:</h3>
                         <GeneratePlayersTable />
-                        <button onClick={beginGame}> <FiIcons.FiPlay /></button>
+                        <button className='replay' onClick={beginGame}> <FiIcons.FiPlay /></button>
                     </div>
                 )}
                 {status === "waitingRoom" && (
@@ -344,7 +344,7 @@ function SpeedTypingTestMultiplayer() {
                 {status === "started" && (
                     <div className="section">
                         {/* <div id="myBar"></div> */}
-                        <div class="container">
+                        <div className ="container">
                             {/* <div class="Player 1">{Math.round((playersWords/correct) * 100)}%</div> */}
                             <GeneratePlayersWords />
                         </div>
