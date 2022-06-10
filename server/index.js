@@ -27,8 +27,8 @@ io.on("connection", (socket) => {
         users.set(socket.id, data)
     })
 
-    socket.on("send_words_count", (wrd, acc) => {
-        socket.to(Array.from(socket.rooms)[Array.from(socket.rooms).length - 1]).emit("player_words_count", users.get(socket.id), wrd, acc)
+    socket.on("send_words_count", (wrd, incwrd) => {
+        socket.to(Array.from(socket.rooms)[Array.from(socket.rooms).length - 1]).emit("player_words_count", users.get(socket.id), wrd, incwrd)
     })
 
     socket.on("make_room", (room, words_list) => {

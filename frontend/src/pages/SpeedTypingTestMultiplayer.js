@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react'
 import randomWords from 'random-words'
 import * as FiIcons from "react-icons/fi"
+import { MdHourglassTop } from "react-icons/md"
 import { IconContext } from "react-icons"
 import io from "socket.io-client"
 import "./GamePanel.css"
@@ -8,7 +9,7 @@ import "./GamePanel.css"
 
 import AuthContext from "../pages/context/AuthProvider"
 const NUMBER_OF_WORDS = 200
-const TIME = 60.0
+const TIME = 20.0
 
 const socket = io.connect("http://localhost:3002")
 
@@ -20,7 +21,7 @@ function SpeedTypingTestMultiplayer() {
     const [currWordIndex, setCurrWordIndex] = useState(0)
     const [currCharIndex, setCurrCharIndex] = useState(-1)
     const [currChar, setCurrChar] = useState("")
-    const [correct, setCorrect] = useState(1)
+    const [correct, setCorrect] = useState(0)
     const [incorrect, setIncorrect] = useState(0)
     const [status, setStatus] = useState("waiting")
     const textInput = useRef(null)
@@ -29,9 +30,11 @@ function SpeedTypingTestMultiplayer() {
     const [room, setRoom] = useState()
     const [prevRoom, setPrevRoom] = useState(false)
     const [players, setPlayers] = useState([])
+    const [value, setValue] = useState("")
     const isAdmin = useRef(false)
 
-    var playersAccuracy = new Map()
+    //var playersAccuracy = new Map()
+    const [playersIncWords, setIncPlayersWords] = useState(new Map())
 
     const { auth } = useContext(AuthContext);
     /* const refreshPage = () => {
@@ -50,17 +53,19 @@ function SpeedTypingTestMultiplayer() {
     }, [status])
 
     useEffect(() => {
-        socket.on("player_words_count", (usr, wrd, acc) => {
+        socket.on("player_words_count", (usr, wrd, inc) => {
             let pw = playersWords
+            let piw = playersIncWords
             pw.set(usr, wrd)
-            playersAccuracy.set(usr, acc)
+            piw.set(usr, inc)
+            //playersAccuracy.set(usr, acc)
             setPlayersWords(pw)
         })
 
         socket.on("new_users", (data, id) => {
             setPlayers(data)
             var pw = playersWords
-            pw.set(data, 1)
+            pw.set(data, 0)
             if (isAdmin.current) {
                 socket.emit("resend_data", id)
             }
@@ -95,8 +100,11 @@ function SpeedTypingTestMultiplayer() {
         }
     }, [room, prevRoom])
 
-    const sendWordsCount = () => {
-        socket.emit("send_words_count", correct, Math.round(((correct) / ((correct) + incorrect)) * 100))
+    const sendWordsCount1 = () => {
+        socket.emit("send_words_count", correct+1, incorrect)
+    }
+    const sendWordsCount2 = () => {
+        socket.emit("send_words_count", correct, incorrect+1)
     }
 
     const joinRoom = () => {
@@ -116,7 +124,7 @@ function SpeedTypingTestMultiplayer() {
         if (status === "finished") {
             setWords(generateWords())
             setCurrWordIndex(0)
-            setCorrect(1)
+            setCorrect(0)
             setIncorrect(0)
             setCurrCharIndex(-1)
             setCurrChar("")
@@ -156,7 +164,7 @@ function SpeedTypingTestMultiplayer() {
             setCurrInput("")
             setCurrWordIndex(currWordIndex + 1)
             setCurrCharIndex(-1)
-            sendWordsCount()
+            
             /* const element = document.getElementById("myBar") 
             let width = 0
 
@@ -185,10 +193,13 @@ function SpeedTypingTestMultiplayer() {
         const doesItMatch = wordToCompare === currInput.trim()
         if (doesItMatch) {
             setCorrect(correct + 1)
+            sendWordsCount1()
         }
         else {
             setIncorrect(incorrect + 1)
+            sendWordsCount2()
         }
+        
     }
 
     function getCharClass(wordIndex, charIndex, char) {
@@ -215,10 +226,12 @@ function SpeedTypingTestMultiplayer() {
 
     function preparePlayersWords(){
         var pw = new Map()
+        var piw = new Map()
         players.forEach((p) => {
             if (p !== auth.username){
-                pw.set(p, 1)
-                playersAccuracy.set(p, 0)
+                pw.set(p, 0)
+                piw.set(p, 0)
+                //playersAccuracy.set(p, 0)
             }
         })
         setPlayersWords(pw)
@@ -239,7 +252,10 @@ function SpeedTypingTestMultiplayer() {
     function GeneratePlayersWords() {
         const listItems = players.map((usr, index) => {
             if (usr !== auth.username){
-                return <div key = {"player" + index}> {usr}: {playersWords.get(usr)}</div>
+                return (<div key={index}><div key = {"player" + index}> {usr}: {playersWords.get(usr)}</div> 
+                    <div key={"bar"+index} className={"bar" + index} style={{ backgroundColor: "#4CAF50", width: ((playersWords.get(usr) + playersIncWords.get(usr)) > 0 )?
+                        (((playersWords.get(usr) + playersIncWords.get(usr)) / NUMBER_OF_WORDS) * 100 + '%'):
+                    "0px" ,  height: "20px"}}> </div></div>)
             }
         })
         return (
@@ -254,15 +270,15 @@ function SpeedTypingTestMultiplayer() {
                     <h3>Your results</h3>
                     <p>Words per minute:</p>
                     <p>
-                        {Math.round((correct-1) / (TIME / 60))}
+                        {Math.round((correct) / (TIME / 60))}
                     </p>
                 </div>
                 <div>
                     <div></div>
                     <p>Accuracy:</p>
-                    {(correct-1) !== 0 ? (
+                    {(correct) !== 0 ? (
                         <p>
-                            {Math.round(((correct-1) / ((correct-1) + incorrect)) * 100)}%
+                            {Math.round(((correct) / ((correct) + incorrect)) * 100)}%
                         </p>
                     ) : (
                         <p>0%</p>
@@ -273,20 +289,20 @@ function SpeedTypingTestMultiplayer() {
         const playersResult = players.map((usr, index) => {
             if (usr !== auth.username){
                 return (
-                    <div className= {"player"}>
-                        <div>
+                    <div className={"player" + index} key={"player" + index}>
+                        <div key={"wpm"+index}>
                             <h3>{usr} results</h3>
                             <p>Words per minute:</p>
                             <p>
-                                {Math.round((playersWords.get(usr) - 1) / (TIME / 60))}
+                                {Math.round((playersWords.get(usr)) / (TIME / 60))}
                             </p>
                         </div>
-                        <div>
-                            <div></div>
+                        <div key={"acc" + index}>
+                            
                             <p>Accuracy:</p>
-                            {(correct-1) !== 0 ? (
+                            {(playersWords.get(usr)) !== 0 ? (
                                 <p>
-                                    {playersAccuracy.get(usr)}%
+                                    {Math.round(((playersWords.get(usr)) / ((playersWords.get(usr)) + playersIncWords.get(usr))) * 100)}%
                                 </p>
                             ) : (
                                 <p>0%</p>
@@ -312,33 +328,48 @@ function SpeedTypingTestMultiplayer() {
                             {/* Start */}
                             {/* <FiIcons.FiPlay />
                         </button> */}
-                        <h3>Press button to create new room</h3>
-                        <button onClick={generateNewGame}> Create New Room</button>
-                        <input
-                            placeholder="Room Number..."
-                            onChange={(event) => {
-                            setRoom(event.target.value)
-                            }}
-                        />
-                        <button onClick={joinRoom}> Join Room</button>
+                        <div className='newRoom'>
+                            <h3>Press button to create new room:</h3>
+                            <button className="multi" id="multi1" onClick={generateNewGame}> Create New Room</button>
+                        </div>
+                        <div className='pasteCode'>
+                            <h3>Or paste code from your friend here:</h3>
+
+                            <div className="input-container ic1">
+                                <input className='codeInput' placeholder=" " autoComplete="off" id="codeInput"
+                                    onChange={(event) => {
+                                        setRoom(event.target.value)
+                                        setValue(event.target.value)
+                                    }}
+                                />
+                                <div className="cut"></div>
+                                <label className="placeholder" htmlFor='codeInput'>Room code</label>
+                            </div>
+
+
+                            <button className="multi" id="multi2" onClick={joinRoom} disabled={!value}> Join Room</button>
+                        </div>
+                        
+                        
                     </div>
                 )}
                 {status === "adminRoom" && (
                     <div className="section">
                         <h3>To play with friends send them this code:</h3>
                         <h2>{room}</h2>
-                        <h3>Current players:</h3>
-                        <GeneratePlayersTable />
                         <button className='replay' onClick={beginGame}> <FiIcons.FiPlay /></button>
+                        <h3 className='players'>Current players:</h3>
+                        <GeneratePlayersTable />
                     </div>
                 )}
                 {status === "waitingRoom" && (
                     <div className="section">
-                    <h3>To play with frinds send them this code:</h3>
+                    <h3>To play with friends send them this code:</h3>
                     <h2>{room}</h2>
-                    <h3>Current players:</h3>
+                    <button className='wait'> <MdHourglassTop /></button>
+                    {/* <h3>Waiting for start</h3> */}
+                    <h3 className='players'>Current players:</h3>
                     <GeneratePlayersTable />
-                    <h3>Waiting for start</h3>
                 </div>
                 )}
                 {status === "started" && (
