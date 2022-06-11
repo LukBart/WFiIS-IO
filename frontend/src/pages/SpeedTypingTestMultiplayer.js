@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react'
 import randomWords from 'random-words'
 import * as FiIcons from "react-icons/fi"
-import { MdHourglassTop } from "react-icons/md"
+import { TailSpin } from 'react-loader-spinner'
 import { IconContext } from "react-icons"
 import io from "socket.io-client"
 import "./GamePanel.css"
@@ -366,8 +366,9 @@ function SpeedTypingTestMultiplayer() {
                     <div className="section">
                     <h3>To play with friends send them this code:</h3>
                     <h2>{room}</h2>
-                    <button className='wait'> <MdHourglassTop /></button>
-                    {/* <h3>Waiting for start</h3> */}
+                    <button className='wait'> <TailSpin color="white" height={50} width={50} /></button>
+                    <br />
+                    <h5>Wait for the start...</h5> 
                     <h3 className='players'>Current players:</h3>
                     <GeneratePlayersTable />
                 </div>
