@@ -3,6 +3,7 @@ const User = require('../../db/models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const UserExperience = require('../../db/models/userExperience')
+const Polish_Words = require('../../db/models/polishWords')
 
 
 module.exports = {
@@ -70,5 +71,12 @@ module.exports = {
             return res.status(201).json({ status: 'ok', user })
         }
         catch (err) { return res.status(422).json({ status: 'error', error: 'Invalid username' }) }
+    },
+    getPolishWord: async (req, res) => {
+        try {
+            const word = await Polish_Words.aggregate([{ $sample: { size: req.body.num_of_words } }]);
+            return res.status(201).json({ status: 'ok', word })
+        }
+        catch (err) { return res.status(422).json({ status: 'error', error: 'Error' }) }
     }
 }

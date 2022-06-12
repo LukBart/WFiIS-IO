@@ -8,5 +8,6 @@ router.post('/login', userActions.login)
 router.post('/createUserData', userActions.createUserData)
 router.post('/updateUserData', userActions.updateUserData)
 router.post('/getUserData', userActions.getUserData)
+router.post('/getPolishWord', userActions.getPolishWord)
 
 module.exports = router

@@ -60,6 +60,7 @@ function SpeedTypingTestMultiplayer() {
             piw.set(usr, inc)
             //playersAccuracy.set(usr, acc)
             setPlayersWords(pw)
+            setIncPlayersWords(piw)
         })
 
         socket.on("new_users", (data, id) => {
@@ -181,7 +182,7 @@ function SpeedTypingTestMultiplayer() {
                 setCurrCharIndex(currCharIndex - 1)
                 setCurrChar("")
             }
-        } else {
+        } else if (keyCode >= 48 && keyCode <= 90) {
             setCurrCharIndex(currCharIndex + 1)
             setPrevInput(currChar)
             setCurrChar(key)
@@ -235,6 +236,7 @@ function SpeedTypingTestMultiplayer() {
             }
         })
         setPlayersWords(pw)
+        setIncPlayersWords(piw)
     }
 
     function GeneratePlayersTable() {
@@ -251,10 +253,24 @@ function SpeedTypingTestMultiplayer() {
 
     function GeneratePlayersWords() {
         const listItems = players.map((usr, index) => {
-            if (usr !== auth.username){
-                return (<div key={index}><div key = {"player" + index}> {usr}: {playersWords.get(usr)}</div> 
-                    <div key={"bar"+index} className={"bar" + index} style={{ backgroundColor: "#4CAF50", width: ((playersWords.get(usr) + playersIncWords.get(usr)) > 0 )?
-                        (((playersWords.get(usr) + playersIncWords.get(usr)) / NUMBER_OF_WORDS) * 100 + '%'):
+            if (usr === auth.username){
+                return (<div key={index}><div key={"player" + index}>{usr}: {(correct+incorrect>0)?
+                        Math.round(correct/(correct+incorrect)*100)+"%":
+                        "0%"} 
+                    </div>
+                    <div key={"bar" + index} className={"bar" + index} style={{
+                        backgroundColor: "red", width: ((correct) > 0) ?
+                            ((correct / NUMBER_OF_WORDS) * 100 + '%') :
+                            "0px", height: "20px"
+                    }}> </div></div>)
+            }
+            else{
+                return (<div key={index}><div key={"player" + index}> {usr}: {(playersWords.get(usr) + playersIncWords.get(usr) > 0) ?
+                    Math.round(playersWords.get(usr) / (playersWords.get(usr) + playersIncWords.get(usr)) * 100) + "%" :
+                    "0%"} 
+                </div> 
+                    <div key={"bar"+index} className={"bar" + index} style={{ backgroundColor: "#4CAF50", width: ((playersWords.get(usr)) > 0 )?
+                        (((playersWords.get(usr)) / NUMBER_OF_WORDS) * 100 + '%'):
                     "0px" ,  height: "20px"}}> </div></div>)
             }
         })
