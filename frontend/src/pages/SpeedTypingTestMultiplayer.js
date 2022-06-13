@@ -5,7 +5,6 @@ import { TailSpin } from 'react-loader-spinner'
 import { IconContext } from "react-icons"
 import io from "socket.io-client"
 import "./GamePanel.css"
-// import user from '../../../backend/actions/api/user'
 
 import AuthContext from "../pages/context/AuthProvider"
 const NUMBER_OF_WORDS = 200
@@ -36,16 +35,7 @@ function SpeedTypingTestMultiplayer() {
     //var playersAccuracy = new Map()
     const [playersIncWords, setIncPlayersWords] = useState(new Map())
 
-    const { auth } = useContext(AuthContext);
-    /* const refreshPage = () => {
-        setStatus('waiting')
-        setWords(generateWords())
-        setCurrWordIndex(0)
-        setCorrect(0)
-        setIncorrect(0)
-        setCurrCharIndex(-1)
-        setCurrChar("")
-    } */
+    const { auth } = useContext(AuthContext)
     useEffect(() => {
         if (status === "started") {
             textInput.current.focus()
@@ -58,7 +48,6 @@ function SpeedTypingTestMultiplayer() {
             let piw = playersIncWords
             pw.set(usr, wrd)
             piw.set(usr, inc)
-            //playersAccuracy.set(usr, acc)
             setPlayersWords(pw)
             setIncPlayersWords(piw)
         })
@@ -85,7 +74,7 @@ function SpeedTypingTestMultiplayer() {
     })
 
     useEffect(() => {
-            socket.on("after_join", (usr, wrd) => {
+        socket.on("after_join", (usr, wrd) => {
             setWords(wrd)
             setPlayers(usr)
         })
@@ -103,7 +92,6 @@ function SpeedTypingTestMultiplayer() {
 
     function playAgain() {
         setStatus('waiting')
-        setWords(generateWords())
         setCurrWordIndex(0)
         setCorrect(0)
         setIncorrect(0)
@@ -111,6 +99,9 @@ function SpeedTypingTestMultiplayer() {
         setCurrChar("")
         setValue("")
         setPlayers([])
+        if (isAdmin.current){
+            isAdmin.current = false
+        }
     }
 
     const sendWordsCount1 = () => {
@@ -135,7 +126,6 @@ function SpeedTypingTestMultiplayer() {
     function start() {
 
         if (status === "finished") {
-            setWords(generateWords())
             setCurrWordIndex(0)
             setCorrect(0)
             setIncorrect(0)
@@ -149,7 +139,6 @@ function SpeedTypingTestMultiplayer() {
             let interval =setInterval(() => {
                 setCountDown((prevCountDown) => {
                     if (prevCountDown <= 0.001) {
-                        // sendWordsCount()
                         setStatus("finished")
                         clearInterval(interval)
                         setCurrInput("")
@@ -177,14 +166,6 @@ function SpeedTypingTestMultiplayer() {
             setCurrInput("")
             setCurrWordIndex(currWordIndex + 1)
             setCurrCharIndex(-1)
-            
-            /* const element = document.getElementById("myBar") 
-            let width = 0
-
-            if (width < 100) {
-                element.style.width = ((currWordIndex+1)/NUMBER_OF_WORDS)*100 + '%'
-            } */
-
         } else if (keyCode === 32) {
             setPrevInput(" ")
             setCurrInput("")
@@ -244,7 +225,6 @@ function SpeedTypingTestMultiplayer() {
             if (p !== auth.username){
                 pw.set(p, 0)
                 piw.set(p, 0)
-                //playersAccuracy.set(p, 0)
             }
         })
         setPlayersWords(pw)
@@ -351,11 +331,6 @@ function SpeedTypingTestMultiplayer() {
             <IconContext.Provider value={{ color: "rgb(246, 233, 246)", size: "50px" }}>
                 {status === "waiting" && (
                     <div className="section">
-                        {/* <h3>Press play when you are ready to start</h3>
-                        <button className='replay' onClick={start}> */}
-                            {/* Start */}
-                            {/* <FiIcons.FiPlay />
-                        </button> */}
                         <div className='newRoom'>
                             <h3>Press button to create new room:</h3>
                             <button className="multi" id="multi1" onClick={generateNewGame}> Create New Room</button>
@@ -403,9 +378,7 @@ function SpeedTypingTestMultiplayer() {
                 )}
                 {status === "started" && (
                     <div className="section">
-                        {/* <div id="myBar"></div> */}
                         <div className ="container">
-                            {/* <div class="Player 1">{Math.round((playersWords/correct) * 100)}%</div> */}
                             <GeneratePlayersWords />
                         </div>
                         <div className="countDown">
