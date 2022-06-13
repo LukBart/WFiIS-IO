@@ -69,8 +69,6 @@ function SpeedTypingTest(props) {
     }
     function playAgain(){
         setStatus('waiting')
-        calculateUserData()
-        updateUserData()
         setWords(generateWords())
         setCurrWordIndex(0)
         setCorrect(0)

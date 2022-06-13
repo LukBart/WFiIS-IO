@@ -101,6 +101,18 @@ function SpeedTypingTestMultiplayer() {
         }
     }, [room, prevRoom])
 
+    function playAgain() {
+        setStatus('waiting')
+        setWords(generateWords())
+        setCurrWordIndex(0)
+        setCorrect(0)
+        setIncorrect(0)
+        setCurrCharIndex(-1)
+        setCurrChar("")
+        setValue("")
+        setPlayers([])
+    }
+
     const sendWordsCount1 = () => {
         socket.emit("send_words_count", correct+1, incorrect)
     }
@@ -427,7 +439,12 @@ function SpeedTypingTestMultiplayer() {
                 {status === "finished" && (
                     <div className="section">
                         <GenerateResultScreen />
+                        <button className='replay' onClick={playAgain}>
+                            {/* Zagraj ponownie */}
+                            <FiIcons.FiRotateCcw />
+                        </button>
                     </div>
+                    
                 )}
             </IconContext.Provider>
         </div>
