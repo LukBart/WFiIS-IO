@@ -61,7 +61,7 @@ export default function Login(props) {
                     Hasło
                 </label>
             </div>
-            <button type="text" className="submit">
+            <button id="login" type="text" className="submit">
                 Zaloguj
             </button>
         </form>

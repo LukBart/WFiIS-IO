@@ -92,7 +92,7 @@ export default function Register() {
                     Powtórz hasło
                 </label>
             </div>
-            <button type="text" className="submit">
+            <button id="register" type="text" className="submit">
                 Zaloguj
             </button>
         </form>
