@@ -5,11 +5,12 @@ import { TailSpin } from 'react-loader-spinner'
 import { IconContext } from "react-icons"
 import io from "socket.io-client"
 import "./GamePanel.css"
+import axios from 'axios'
 
 import AuthContext from "../pages/context/AuthProvider"
 const NUMBER_OF_WORDS = 200
 const TIME = 20.0
-
+const requiredExperience = [{ level: 1, exp: 0 }, { level: 2, exp: 300 }, { level: 3, exp: 713 }, { level: 4, exp: 1200 }, { level: 5, exp: 1741 }, { level: 6, exp: 2326 }, { level: 7, exp: 2947 }, { level: 8, exp: 3600 }, { level: 9, exp: 4279 }, { level: 10, exp: 4982 }]
 const socket = io.connect("http://localhost:3002")
 
 function SpeedTypingTestMultiplayer() {
@@ -24,13 +25,15 @@ function SpeedTypingTestMultiplayer() {
     const [incorrect, setIncorrect] = useState(0)
     const [status, setStatus] = useState("waiting")
     const textInput = useRef(null)
-    
+
     const [playersWords, setPlayersWords] = useState(new Map())
     const [room, setRoom] = useState()
     const [prevRoom, setPrevRoom] = useState(false)
     const [players, setPlayers] = useState([])
     const [value, setValue] = useState("")
     const isAdmin = useRef(false)
+    const level = useRef(0)
+    const experience = useRef(0);
 
     //var playersAccuracy = new Map()
     const [playersIncWords, setIncPlayersWords] = useState(new Map())
@@ -70,7 +73,7 @@ function SpeedTypingTestMultiplayer() {
             setPlayers(usr)
         })
 
-        
+
     })
 
     useEffect(() => {
@@ -82,15 +85,17 @@ function SpeedTypingTestMultiplayer() {
 
     useEffect(() => {
         socket.emit("give_username", auth.username)
-        if (prevRoom){
+        if (prevRoom) {
             socket.emit("disconnect_room", prevRoom)
         }
-        if (isAdmin.current){
+        if (isAdmin.current) {
             socket.emit("make_room", room, words)
         }
     }, [room, prevRoom])
 
     function playAgain() {
+        calculateUserData()
+        updateUserData()
         setStatus('waiting')
         setCurrWordIndex(0)
         setCorrect(0)
@@ -99,16 +104,16 @@ function SpeedTypingTestMultiplayer() {
         setCurrChar("")
         setValue("")
         setPlayers([])
-        if (isAdmin.current){
+        if (isAdmin.current) {
             isAdmin.current = false
         }
     }
 
     const sendWordsCount1 = () => {
-        socket.emit("send_words_count", correct+1, incorrect)
+        socket.emit("send_words_count", correct + 1, incorrect)
     }
     const sendWordsCount2 = () => {
-        socket.emit("send_words_count", correct, incorrect+1)
+        socket.emit("send_words_count", correct, incorrect + 1)
     }
 
     const joinRoom = () => {
@@ -124,7 +129,7 @@ function SpeedTypingTestMultiplayer() {
     }
 
     function start() {
-
+        getUserData()
         if (status === "finished") {
             setCurrWordIndex(0)
             setCorrect(0)
@@ -136,7 +141,7 @@ function SpeedTypingTestMultiplayer() {
             setStatus("started")
             preparePlayersWords()
             var startTime = new Date()
-            let interval =setInterval(() => {
+            let interval = setInterval(() => {
                 setCountDown((prevCountDown) => {
                     if (prevCountDown <= 0.001) {
                         setStatus("finished")
@@ -150,11 +155,11 @@ function SpeedTypingTestMultiplayer() {
                             , min = timeElapsed.getUTCMinutes()
                             , sec = timeElapsed.getUTCSeconds()
                             , ms = timeElapsed.getUTCMilliseconds()
-                        return (TIME - (min*60) - sec -(ms/1000)).toFixed(3)
+                        return (TIME - (min * 60) - sec - (ms / 1000)).toFixed(3)
                     }
                 })
             })
-            
+
         }
     }
 
@@ -193,7 +198,7 @@ function SpeedTypingTestMultiplayer() {
             setIncorrect(incorrect + 1)
             sendWordsCount2()
         }
-        
+
     }
 
     function getCharClass(wordIndex, charIndex, char) {
@@ -218,11 +223,11 @@ function SpeedTypingTestMultiplayer() {
         setStatus("adminRoom")
     }
 
-    function preparePlayersWords(){
+    function preparePlayersWords() {
         var pw = new Map()
         var piw = new Map()
         players.forEach((p) => {
-            if (p !== auth.username){
+            if (p !== auth.username) {
                 pw.set(p, 0)
                 piw.set(p, 0)
             }
@@ -242,32 +247,117 @@ function SpeedTypingTestMultiplayer() {
         socket.emit("begin_game")
         start()
     }
+    const getUserData = async () => {
+        const dataJson = JSON.stringify({
+            username: auth.username,
+        })
+        try {
+            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/getUserData', dataJson, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+            if (res.data.status === 'ok') {
+                level.current = res.data.user.level;
+                experience.current = res.data.user.experience
+            }
+        }
+        catch (err) {
+        }
+    }
+    const updateUserData = async () => {
+        const dataJson = JSON.stringify({
+            username: auth.username,
+            level: level.current,
+            experience: experience.current,
+        })
+
+        try {
+            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/updateUserData', dataJson, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+            if (res.data.status === 'ok') {
+            }
+        }
+        catch (err) {
+        }
+    }
+
+    function calculateUserData() {
+        var accuracy = correct / (correct + incorrect)
+        var wordsPerMinute = (correct / (TIME / 60))
+        var accuracyBonus = 1.0
+
+        switch (true) {
+            case accuracy > 0.0 && accuracy <= 0.2:
+                accuracyBonus = 0.8
+                break;
+            case accuracy > 0.2 && accuracy <= 0.5:
+                accuracyBonus = 1.0
+                break;
+            case accuracy > 0.5 && accuracy <= 0.7:
+                accuracyBonus = 1.5
+                break;
+            case accuracy > 0.7 && accuracy <= 0.9:
+                accuracyBonus = 2.0
+                break;
+            case accuracy > 0.9 && accuracy <= 1.0:
+                accuracyBonus = 3.0
+                break;
+            default:
+                break;
+
+        }
+        var experienceGained = wordsPerMinute * accuracyBonus
+        experience.current += experienceGained
+
+        checkIfLeveledUp()
+    }
+
+    function checkIfLeveledUp() {
+        var experienceNeeded
+        var expectedLevel
+        for (let index = 0; index < requiredExperience.length; index++) {
+
+            if (requiredExperience[index].level === level.current) {
+                experienceNeeded = requiredExperience[index + 1].exp
+                expectedLevel = requiredExperience[index + 1].level
+                break;
+            }
+        }
+        if (experience.current >= experienceNeeded) {
+            level.current = expectedLevel
+            alert("You have reached a new level")
+
+        }
+
+    }
 
     function GeneratePlayersWords() {
         const listItems = players.map((usr, index) => {
-            if (usr === auth.username){
-                return (<div key={index}><div key={"player" + index}>{usr}: {(correct+incorrect>0)?
-                        Math.round(correct/(correct+incorrect)*100)+"%":
-                        "0%"} 
-                    </div>
+            if (usr === auth.username) {
+                return (<div key={index}><div key={"player" + index}>{usr}: {(correct + incorrect > 0) ?
+                    Math.round(correct / (correct + incorrect) * 100) + "%" :
+                    "0%"}
+                </div>
                     <div key={"bar" + index} className={"bar" + index} style={{
                         backgroundColor: "red", width: ((correct) > 0) ?
                             ((correct / NUMBER_OF_WORDS) * 100 + '%') :
                             "0px", height: "20px"
                     }}> </div></div>)
             }
-            else{
+            else {
                 return (<div key={index}><div key={"player" + index}> {usr}: {(playersWords.get(usr) + playersIncWords.get(usr) > 0) ?
                     Math.round(playersWords.get(usr) / (playersWords.get(usr) + playersIncWords.get(usr)) * 100) + "%" :
-                    "0%"} 
-                </div> 
-                    <div key={"bar"+index} className={"bar" + index} style={{ backgroundColor: "#4CAF50", width: ((playersWords.get(usr)) > 0 )?
-                        (((playersWords.get(usr)) / NUMBER_OF_WORDS) * 100 + '%'):
-                    "0px" ,  height: "20px"}}> </div></div>)
+                    "0%"}
+                </div>
+                    <div key={"bar" + index} className={"bar" + index} style={{
+                        backgroundColor: "#4CAF50", width: ((playersWords.get(usr)) > 0) ?
+                            (((playersWords.get(usr)) / NUMBER_OF_WORDS) * 100 + '%') :
+                            "0px", height: "20px"
+                    }}> </div></div>)
             }
         })
         return (
-            <>{listItems}</>  
+            <>{listItems}</>
         )
     }
 
@@ -293,12 +383,12 @@ function SpeedTypingTestMultiplayer() {
                     )}
                 </div>
             </div>
-        
+
         const playersResult = players.map((usr, index) => {
-            if (usr !== auth.username){
+            if (usr !== auth.username) {
                 return (
                     <div className={"player" + index} key={"player" + index}>
-                        <div key={"wpm"+index}>
+                        <div key={"wpm" + index}>
                             <h3>{usr} results</h3>
                             <p>Words per minute:</p>
                             <p>
@@ -306,7 +396,7 @@ function SpeedTypingTestMultiplayer() {
                             </p>
                         </div>
                         <div key={"acc" + index}>
-                            
+
                             <p>Accuracy:</p>
                             {(playersWords.get(usr)) !== 0 ? (
                                 <p>
@@ -322,8 +412,8 @@ function SpeedTypingTestMultiplayer() {
 
         })
         return (
-            <>{yourResult}{playersResult}</>  
-        ) 
+            <>{yourResult}{playersResult}</>
+        )
     }
 
     return (
@@ -352,8 +442,8 @@ function SpeedTypingTestMultiplayer() {
 
                             <button className="multi" id="multi2" onClick={joinRoom} disabled={!value}> Join Room</button>
                         </div>
-                        
-                        
+
+
                     </div>
                 )}
                 {status === "adminRoom" && (
@@ -367,18 +457,18 @@ function SpeedTypingTestMultiplayer() {
                 )}
                 {status === "waitingRoom" && (
                     <div className="section">
-                    <h3>To play with friends send them this code:</h3>
-                    <h2>{room}</h2>
-                    <button className='wait'> <TailSpin color="white" height={50} width={50} /></button>
-                    <br />
-                    <h5>Wait for the start...</h5> 
-                    <h3 className='players'>Current players:</h3>
-                    <GeneratePlayersTable />
-                </div>
+                        <h3>To play with friends send them this code:</h3>
+                        <h2>{room}</h2>
+                        <button className='wait'> <TailSpin color="white" height={50} width={50} /></button>
+                        <br />
+                        <h5>Wait for the start...</h5>
+                        <h3 className='players'>Current players:</h3>
+                        <GeneratePlayersTable />
+                    </div>
                 )}
                 {status === "started" && (
                     <div className="section">
-                        <div className ="container">
+                        <div className="container">
                             <GeneratePlayersWords />
                         </div>
                         <div className="countDown">
@@ -417,7 +507,7 @@ function SpeedTypingTestMultiplayer() {
                             <FiIcons.FiRotateCcw />
                         </button>
                     </div>
-                    
+
                 )}
             </IconContext.Provider>
         </div>
