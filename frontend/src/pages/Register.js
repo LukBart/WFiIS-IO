@@ -55,7 +55,6 @@ export default function Register() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        // alert(username + '\n' + password + '\n' + passwordRep + '\n' + (password === passwordRep))
         if (password !== passwordRep) {
             document.getElementById("password").value = ""
             document.getElementById("passwordRepeat").value = ""

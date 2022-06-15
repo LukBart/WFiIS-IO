@@ -18,7 +18,6 @@ module.exports = {
             user.password
         )
         if (isPasswordValid) {
-            // const token = jwt.sign({ username: user.username }, 'userToken')
             return res.status(201).json({ status: 'ok', user })
         } else {
             return res.status(422).json({ status: 'error', user: null })
