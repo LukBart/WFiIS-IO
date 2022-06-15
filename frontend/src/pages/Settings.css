@@ -1,0 +1,25 @@
+
+
+.settingsPanel
+{
+    display: flex;
+    flex-direction: column;
+    width:20vw;
+    gap: 4vh;
+}
+
+.userData
+{
+    background-color: white;
+    color: black;
+    border-color: black;
+    border-bottom-width: 2px;
+    padding: 1vh;
+    border-radius: 10px;
+}
+
+select
+{
+    align-self: flex-end;
+    width: 16vw;
+}

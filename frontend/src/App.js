@@ -11,6 +11,7 @@ import {useContext} from "react";
 import AuthContext from "./pages/context/AuthProvider";
 import SpeedTypingTest from "./pages/SpeedTypingTest";
 import SpeedTypingTestMultiplayer from "./pages/SpeedTypingTestMultiplayer"
+import Settings from "./pages/Settings";
 
 
 function App() {
@@ -33,6 +34,9 @@ function App() {
           </Route>
           <Route element={<RequireAuth />}>
             <Route path="/speedTypingTestMultiplayer" element={<SpeedTypingTestMultiplayer />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/settings" element={<Settings />} />
           </Route>
         </Routes>
       </BrowserRouter>

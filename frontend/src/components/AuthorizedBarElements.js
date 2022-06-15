@@ -1,7 +1,6 @@
 import React from "react"
 import * as BiIcons from "react-icons/bi"
 import * as FiIcons from "react-icons/fi"
-import * as BsIcons from "react-icons/bs"
 
 export const AuthorizedBarElements = [
     {
@@ -24,7 +23,7 @@ export const AuthorizedBarElements = [
     },
     {
         title: "Settings",
-        path: "/logout",
+        path: "/settings",
         icon: <FiIcons.FiSettings />,
         cName: "nav-text",
     },
