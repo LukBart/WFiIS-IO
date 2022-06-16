@@ -49,6 +49,7 @@ export default function Settings() {
         }
         return fonts
     }
+
     function createColorsSelect() {
         let colors = []
         for (let i = 0; i < level.current; i++) {
