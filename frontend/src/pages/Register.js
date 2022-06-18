@@ -55,7 +55,6 @@ export default function Register() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        // alert(username + '\n' + password + '\n' + passwordRep + '\n' + (password === passwordRep))
         if (password !== passwordRep) {
             document.getElementById("password").value = ""
             document.getElementById("passwordRepeat").value = ""
@@ -92,7 +91,7 @@ export default function Register() {
                     Powtórz hasło
                 </label>
             </div>
-            <button type="text" className="submit">
+            <button id="register" type="text" className="submit">
                 Zaloguj
             </button>
         </form>

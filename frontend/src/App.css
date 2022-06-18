@@ -1,14 +1,18 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+:root {
+  --bg-color: rgb(246, 233, 246);
+  --font: sans-serif;
+}
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Lato", sans-serif;
+  font-family: var(--font);
 }
 
 body {
-  background-color: rgb(246, 233, 246);
+  background-color: var(--bg-color);
   padding-top: 16px;
 }
 

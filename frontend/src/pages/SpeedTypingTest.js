@@ -7,7 +7,7 @@ import "./GamePanel.css"
 import axios from 'axios'
 const NUMBER_OF_WORDS = 200
 const TIME = 10.0
-const lang="pl"
+const lang = "en"
 
 
 function SpeedTypingTest(props) {
@@ -26,16 +26,7 @@ function SpeedTypingTest(props) {
     const level = useRef(0)
     const experience = useRef(0);
     var a = new Array()
-    const requiredExperience = [{ level: 1, exp: 0 }, { level: 2, exp: 300 }, { level: 3, exp: 713 }, { level: 4, exp: 200 }, { level: 5, exp: 1741 }, { level: 6, exp: 2326 }, { level: 7, exp: 2947 }, { level: 8, exp: 3600 }, { level: 9, exp: 4279 }, { level: 10, exp: 4982 }]
-    /* const refreshPage = () => {
-        setStatus('waiting')
-        setWords(generateWords())
-        setCurrWordIndex(0)
-        setCorrect(0)
-        setIncorrect(0)
-        setCurrCharIndex(-1)
-        setCurrChar("")
-    } */
+    const requiredExperience = [{ level: 1, exp: 0 }, { level: 2, exp: 300 }, { level: 3, exp: 713 }, { level: 4, exp: 1200 }, { level: 5, exp: 1741 }, { level: 6, exp: 2326 }, { level: 7, exp: 2947 }, { level: 8, exp: 3600 }, { level: 9, exp: 4279 }, { level: 10, exp: 4982 }]
 
     useEffect(() => {
         setWords(generateWords())
@@ -56,18 +47,17 @@ function SpeedTypingTest(props) {
                 headers: { 'Content-Type': 'application/json' }
             })
             if (res.data.status === 'ok') {
-                //polishWord=res.data.word[0].word
-                for (var i = 0; i < NUMBER_OF_WORDS; i++) 
-                {
+                for (var i = 0; i < NUMBER_OF_WORDS; i++) {
                     a.push(res.data.word[i].word)
                 }
-                /* console.log(polishWord) */
             }
         }
         catch (err) {
         }
     }
-    function playAgain(){
+    function playAgain() {
+        calculateUserData()
+        updateUserData()
         setStatus('waiting')
         setWords(generateWords())
         setCurrWordIndex(0)
@@ -78,14 +68,11 @@ function SpeedTypingTest(props) {
     }
 
     function generateWords() {
-        if (lang==="pl")
-        {
+        if (lang === "pl") {
             getPolishWord()
-            //console.log(a)
             return a
         }
-        else
-        {
+        else {
             return new Array(NUMBER_OF_WORDS).fill(null).map(() => randomWords())
         }
     }
@@ -93,8 +80,6 @@ function SpeedTypingTest(props) {
     function start() {
         getUserData()
         if (status === "finished") {
-            calculateUserData()
-            updateUserData()
             setWords(generateWords())
             setCurrWordIndex(0)
             setCorrect(0)
@@ -130,31 +115,22 @@ function SpeedTypingTest(props) {
     }
 
     function handleKeyDown({ keyCode, key }) {
-        //space
         if (keyCode === 32 && prevInput !== " ") {
             checkMatch()
             setPrevInput(" ")
             setCurrInput("")
             setCurrWordIndex(currWordIndex + 1)
             setCurrCharIndex(-1)
-            /* const element = document.getElementById("myBar"); 
-            let width = 0;
-
-            if (width < 100) {
-                element.style.width = ((currWordIndex+1)/NUMBER_OF_WORDS)*100 + '%';
-            } */
-            //space
         } else if (keyCode === 32) {
             setPrevInput(" ")
             setCurrInput("")
-        }   //backspace
+        }
         else if (keyCode === 8) {
             if (currCharIndex >= 0) {
                 setCurrCharIndex(currCharIndex - 1)
                 setCurrChar("")
             }
-            //a-z, 0-9    
-        } else if (keyCode>=48 && keyCode<=90) {
+        } else if (keyCode >= 48 && keyCode <= 90) {
             setCurrCharIndex(currCharIndex + 1)
             setPrevInput(currChar)
             setCurrChar(key)
@@ -263,6 +239,7 @@ function SpeedTypingTest(props) {
         }
         if (experience.current >= experienceNeeded) {
             level.current = expectedLevel
+            alert("You have reached a new level ", level.current, " !")
         }
     }
 
