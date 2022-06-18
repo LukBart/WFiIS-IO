@@ -214,7 +214,11 @@ function SpeedTypingTestMultiplayer() {
         isAdmin.current = true
         setWords(generateWords())
         setPrevRoom(room)
-        setRoom(Math.random().toString(36).slice(2))
+        var rm = Math.random().toString(36).slice(2)
+        while (rm.length <= 10 || rm.length >= 12){
+            rm = Math.random().toString(36).slice(2)
+        }
+        setRoom(rm)
         setStatus("adminRoom")
     }
 
