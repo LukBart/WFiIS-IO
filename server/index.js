@@ -10,6 +10,8 @@ const roomsUsers = new Map()
 const words = new Map()
 const admins = new Map()
 
+const PORT = process.env.PORT || 3002
+
 app.use(cors())
 const server = http.createServer(app)
 
@@ -71,8 +73,7 @@ io.on("connection", (socket) => {
     })
 })
 
-// function gameInterval
 
-server.listen(3002, () =>{
+server.listen(PORT, () =>{
     console.log("server is running")
 })
