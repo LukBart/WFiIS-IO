@@ -34,6 +34,7 @@ function SpeedTypingTestMultiplayer() {
     const isAdmin = useRef(false)
     const level = useRef(0)
     const experience = useRef(0);
+    const isNotUpdated = useRef(false)
 
     //var playersAccuracy = new Map()
     const [playersIncWords, setIncPlayersWords] = useState(new Map())
@@ -128,13 +129,7 @@ function SpeedTypingTestMultiplayer() {
 
     function start() {
         getUserData()
-        if (status === "finished") {
-            setCurrWordIndex(0)
-            setCorrect(0)
-            setIncorrect(0)
-            setCurrCharIndex(-1)
-            setCurrChar("")
-        }
+        isNotUpdated.current = true
         if (status !== "started") {
             setStatus("started")
             preparePlayersWords()
@@ -143,8 +138,6 @@ function SpeedTypingTestMultiplayer() {
                 setCountDown((prevCountDown) => {
                     if (prevCountDown <= 0.001) {
                         setStatus("finished")
-                        calculateUserData()
-                        updateUserData()
                         clearInterval(interval)
                         setCurrInput("")
                         return TIME.toFixed(3)
@@ -159,7 +152,6 @@ function SpeedTypingTestMultiplayer() {
                     }
                 })
             })
-
         }
     }
 
@@ -420,6 +412,14 @@ function SpeedTypingTestMultiplayer() {
         )
     }
 
+    function LeveLUP () {
+        if (isNotUpdated.current) {
+            calculateUserData()
+            updateUserData()
+            isNotUpdated.current = false
+        }
+    }
+
     return (
         <div className='gamePanel'>
             <IconContext.Provider value={{ color: "rgb(246, 233, 246)", size: "50px" }}>
@@ -505,6 +505,7 @@ function SpeedTypingTestMultiplayer() {
                 )}
                 {status === "finished" && (
                     <div className="section">
+                        <LeveLUP />
                         <GenerateResultScreen />
                         <button className='replay' onClick={playAgain}>
                             {/* Zagraj ponownie */}
