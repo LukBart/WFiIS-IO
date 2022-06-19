@@ -56,8 +56,6 @@ function SpeedTypingTest(props) {
         }
     }
     function playAgain() {
-        calculateUserData()
-        updateUserData()
         setStatus('waiting')
         setWords(generateWords())
         setCurrWordIndex(0)
@@ -95,6 +93,8 @@ function SpeedTypingTest(props) {
                     if (prevCountDown <= 0.001) {
 
                         setStatus("finished")
+                        calculateUserData()
+                        updateUserData()
                         clearInterval(interval)
                         setCurrInput("")
                         return TIME.toFixed(3)

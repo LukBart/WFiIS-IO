@@ -94,8 +94,6 @@ function SpeedTypingTestMultiplayer() {
     }, [room, prevRoom])
 
     function playAgain() {
-        calculateUserData()
-        updateUserData()
         setStatus('waiting')
         setCurrWordIndex(0)
         setCorrect(0)
@@ -145,6 +143,8 @@ function SpeedTypingTestMultiplayer() {
                 setCountDown((prevCountDown) => {
                     if (prevCountDown <= 0.001) {
                         setStatus("finished")
+                        calculateUserData()
+                        updateUserData()
                         clearInterval(interval)
                         setCurrInput("")
                         return TIME.toFixed(3)
