@@ -56,7 +56,7 @@ export default function Login(props) {
             </div>
             <div className="input-container ic2">
                 <input id="passwordLog" className="input" type="password" placeholder=" " autoComplete="off" onChange={(e) => { setPassword(e.target.value) }} />
-                <div className="cut cut-short"></div>
+                <div className="cut"></div>
                 <label htmlFor="passwordLog" className="placeholder">
                     Password
                 </label>

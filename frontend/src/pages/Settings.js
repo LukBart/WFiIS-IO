@@ -1,18 +1,18 @@
 import { useEffect, useRef, useContext, useState } from 'react'
 import '../App.css'
-import SkinContext from './context/SkinContext';
-import './Settings.css';
-import AuthContext from "../pages/context/AuthProvider";
+import SkinContext from './context/SkinContext'
+import './Settings.css'
+import AuthContext from "../pages/context/AuthProvider"
 import axios from 'axios'
 
 export default function Settings() {
-    const { auth } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext)
     const level = useRef(0)
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true)
     const experience = useRef(0)
-    const { selectedColor, setSelectedColor } = useContext(SkinContext);
-    const { selectedFont, setSelectedFont } = useContext(SkinContext);
-    const { selectedLanguage, setSelectedLanguage } = useContext(SkinContext);
+    const { selectedColor, setSelectedColor } = useContext(SkinContext)
+    const { selectedFont, setSelectedFont } = useContext(SkinContext)
+    const { selectedLanguage, setSelectedLanguage } = useContext(SkinContext)
 
     const languageOptions = [
         { value: 'en', text: "English" },
@@ -76,18 +76,18 @@ export default function Settings() {
 
     useEffect(() => {
         getUserData()
-    });
+    })
 
     const handleChangeColor = event => {
-        setSelectedColor(event.target.value);
-    };
+        setSelectedColor(event.target.value)
+    }
 
     const handleChangeFont = event => {
-        setSelectedFont(event.target.value);
-    };
+        setSelectedFont(event.target.value)
+    }
 
     const handleLanguageChange = event => {
-        setSelectedLanguage(event.target.value);
+        setSelectedLanguage(event.target.value)
     }
 
     const getUserData = async () => {
@@ -99,7 +99,7 @@ export default function Settings() {
                 headers: { 'Content-Type': 'application/json' }
             })
             if (res.data.status === 'ok') {
-                level.current = res.data.user.level;
+                level.current = res.data.user.level
                 experience.current = res.data.user.experience
             }
         }
@@ -115,34 +115,29 @@ export default function Settings() {
         <>
             <div className='gamePanel'>
                 <div className='settingsPanel'>
-                    <p>User:</p>
-                    <p className='userData'>
+                    <div className='text'><h3>User:</h3></div>
+                    <div className='userData'>
                         {auth.username}
-                    </p>
-                    <p>Level:</p>
-                    <p className='userData'>
+                    </div>
+                    <div className='text'><h3>Level:</h3></div>
+                    <div className='userData'>
                         {level.current}
-                    </p>
-                    <p>Experience:</p>
-                    <p className='userData'>
-                        {experience.current}
-                    </p>
-                    <p className="languageList">
-                        <label>Language</label>
-                        <select value={selectedLanguage} onChange={handleLanguageChange}>{createLanguageSelect()}</select>
-                    </p>
-                    <p className='SkinList'>
-                        <label>Color: </label>
-                        <select value={selectedColor} onChange={handleChangeColor}>
+                    </div>
+                    <div className='text'><h3>Experience:</h3></div>
+                    <div className='userData'>
+                        {Math.round(experience.current*100)/100 + " XP"}
+                    </div>
+                    <div className='text'><h3>Selected language:</h3></div>
+                        <select value={selectedLanguage} onChange={handleLanguageChange} className="mySelect">{createLanguageSelect()}</select>
+                    <div className='text'><h3>Selected color:</h3></div>
+                        <select value={selectedColor} onChange={handleChangeColor} className="mySelect">
                             {createColorsSelect()}
                         </select>
-                    </p>
-                    <p className='SkinList'>
-                        <label>Font: </label>
-                        <select value={selectedFont} onChange={handleChangeFont}>
+                    <div className='text'><h3>Selected font:</h3></div>
+                        <select value={selectedFont} onChange={handleChangeFont} className="mySelect">
                             {createFontsSelect()}
                         </select>
-                    </p>
+
                 </div>
             </div >
         </>

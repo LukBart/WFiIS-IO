@@ -79,7 +79,7 @@ export default function Register() {
             </div>
             <div className="input-container ic2">
                 <input id="password" className="input" type="password" placeholder=" " onChange={(e) => { setPassword(e.target.value) }} />
-                <div className="cut cut-short"></div>
+                <div className="cut"></div>
                 <label htmlFor="password" className="placeholder">
                     Password
                 </label>
