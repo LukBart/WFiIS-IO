@@ -10,7 +10,7 @@ const roomsUsers = new Map()
 const words = new Map()
 const admins = new Map()
 
-const PORT = process.env.serverURL || 3002
+const PORT = process.env.PORT || 3002
 
 app.use(cors())
 const server = http.createServer(app)
@@ -18,7 +18,7 @@ const server = http.createServer(app)
 const io = 
 new Server(server, {
     cors:{
-        origin: process.env.frontURL || "http://localhost:3000",
+        origin: "https://stt-wfiis-frontend.herokuapp.com",
         methods: ["GET", "POST"],
     },
 })
@@ -76,5 +76,5 @@ io.on("connection", (socket) => {
 
 
 server.listen(PORT, () =>{
-    console.log("server is running")
+    console.log("server is running: " + PORT)
 })

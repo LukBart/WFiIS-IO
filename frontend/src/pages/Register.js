@@ -16,7 +16,7 @@ export default function Register() {
             password: password
         })
         try {
-            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/register', dataJson, {
+            const res = await axios.post(("https://stt-wfiis-backend.herokuapp.com" || "http://localhost:3001") + '/api/register', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })
             if (res.data.status === 'ok') {
@@ -34,7 +34,6 @@ export default function Register() {
             document.getElementById("passwordRepeat").value = ""
             alert("Nickname already exist!")
         }
-
     }
 
     const createUserData = async () => {
@@ -44,7 +43,7 @@ export default function Register() {
             experience: 0,
         })
         try {
-            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/createUserData', dataJson, {
+            const res = await axios.post(("https://stt-wfiis-backend.herokuapp.com" || "http://localhost:3001") + '/api/createUserData', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })
             console.log(res)
