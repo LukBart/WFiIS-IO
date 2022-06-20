@@ -1,8 +1,7 @@
 .settingsPanel {
     display: flex;
     flex-direction: column;
-    width: 20vw;
-    gap: 3vh;
+    width: 15vw;
     user-select: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -18,11 +17,19 @@
     padding: 1vh;
     border-radius: 10px;
     text-align: center;
+    margin-bottom: 2vh;
+    margin-top: 0.5vh;
 }
 
 select {
+    border-bottom-width: 2px;
+    padding: 1vh;
+    border-radius: 10px;
+    text-align: center;
     align-self: flex-end;
-    width: 16vw;
+    width: 15vw;
+    margin-bottom: 2vh;
+    margin-top: 0.5vh;
 }
 
 p {
