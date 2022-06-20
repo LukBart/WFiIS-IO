@@ -54,7 +54,7 @@ export default function Settings() {
         let colors = []
         for (let i = 0; i < level.current; i++) {
 
-            colors.push(<option key={colorOptions[i].text}>{colorOptions[i].value}</option>)
+            colors.push(<option key={colorOptions[i].text}>{colorOptions[i].text}</option>)
         }
         return colors
     }
@@ -99,26 +99,26 @@ export default function Settings() {
         <>
             <div className='gamePanel'>
                 <div className='settingsPanel'>
-                    <p>Użytkownik</p>
+                    <p>User:</p>
                     <p className='userData'>
                         {auth.username}
                     </p>
-                    <p>Poziom</p>
+                    <p>Level:</p>
                     <p className='userData'>
                         {level.current}
                     </p>
-                    <p>Doświadczenie</p>
+                    <p>Experience:</p>
                     <p className='userData'>
                         {experience.current}
                     </p>
                     <p className='SkinList'>
-                        <label>Kolor </label>
+                        <label>Color: </label>
                         <select value={selectedColor} onChange={handleChangeColor}>
                             {createColorsSelect()}
                         </select>
                     </p>
                     <p className='SkinList'>
-                        <label>Font </label>
+                        <label>Font: </label>
                         <select value={selectedFont} onChange={handleChangeFont}>
                             {createFontsSelect()}
                         </select>

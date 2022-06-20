@@ -6,7 +6,7 @@ import AuthContext from "../pages/context/AuthProvider";
 import "./GamePanel.css"
 import axios from 'axios'
 const NUMBER_OF_WORDS = 200
-const TIME = 10.0
+const TIME = 60.0
 const lang = "en"
 
 

@@ -9,7 +9,7 @@ import axios from 'axios'
 
 import AuthContext from "../pages/context/AuthProvider"
 const NUMBER_OF_WORDS = 200
-const TIME = 20.0
+const TIME = 60.0
 const requiredExperience = [{ level: 1, exp: 0 }, { level: 2, exp: 300 }, { level: 3, exp: 713 }, { level: 4, exp: 1200 }, { level: 5, exp: 1741 }, { level: 6, exp: 2326 }, { level: 7, exp: 2947 }, { level: 8, exp: 3600 }, { level: 9, exp: 4279 }, { level: 10, exp: 4982 }]
 const socket = io.connect("http://localhost:3002")
 
