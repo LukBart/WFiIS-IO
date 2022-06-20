@@ -115,15 +115,15 @@ export default function Settings() {
         <>
             <div className='gamePanel'>
                 <div className='settingsPanel'>
-                    <p>Username</p>
+                    <p>User:</p>
                     <p className='userData'>
                         {auth.username}
                     </p>
-                    <p>Level</p>
+                    <p>Level:</p>
                     <p className='userData'>
                         {level.current}
                     </p>
-                    <p>Experience</p>
+                    <p>Experience:</p>
                     <p className='userData'>
                         {experience.current}
                     </p>
@@ -132,13 +132,13 @@ export default function Settings() {
                         <select value={selectedLanguage} onChange={handleLanguageChange}>{createLanguageSelect()}</select>
                     </p>
                     <p className='SkinList'>
-                        <label>Color </label>
+                        <label>Color: </label>
                         <select value={selectedColor} onChange={handleChangeColor}>
                             {createColorsSelect()}
                         </select>
                     </p>
                     <p className='SkinList'>
-                        <label>Font </label>
+                        <label>Font: </label>
                         <select value={selectedFont} onChange={handleChangeFont}>
                             {createFontsSelect()}
                         </select>

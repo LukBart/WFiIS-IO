@@ -7,7 +7,7 @@ import SkinContext from './context/SkinContext';
 import "./GamePanel.css"
 import axios from 'axios'
 const NUMBER_OF_WORDS = 200
-const TIME = 10.0
+const TIME = 60.0
 const lang = "en"
 
 
@@ -29,6 +29,7 @@ function SpeedTypingTest(props) {
     const experience = useRef(0);
     var a = new Array()
     const requiredExperience = [{ level: 1, exp: 0 }, { level: 2, exp: 300 }, { level: 3, exp: 713 }, { level: 4, exp: 1200 }, { level: 5, exp: 1741 }, { level: 6, exp: 2326 }, { level: 7, exp: 2947 }, { level: 8, exp: 3600 }, { level: 9, exp: 4279 }, { level: 10, exp: 4982 }]
+    const isNotUpdated = useRef(false)
 
     useEffect(() => {
         setWords(generateWords())
@@ -58,8 +59,6 @@ function SpeedTypingTest(props) {
         }
     }
     function playAgain() {
-        calculateUserData()
-        updateUserData()
         setStatus('waiting')
         setWords(generateWords())
         setCurrWordIndex(0)
@@ -82,21 +81,13 @@ function SpeedTypingTest(props) {
 
     function start() {
         getUserData()
-        if (status === "finished") {
-            setWords(generateWords())
-            setCurrWordIndex(0)
-            setCorrect(0)
-            setIncorrect(0)
-            setCurrCharIndex(-1)
-            setCurrChar("")
-        }
+        isNotUpdated.current = true
         if (status !== "started") {
             setStatus("started")
             var startTime = new Date();
             let interval = setInterval(() => {
                 setCountDown((prevCountDown) => {
                     if (prevCountDown <= 0.001) {
-
                         setStatus("finished")
                         clearInterval(interval)
                         setCurrInput("")
@@ -246,6 +237,13 @@ function SpeedTypingTest(props) {
         }
     }
 
+    function LeveLUP () {
+        if (isNotUpdated.current) {
+            calculateUserData()
+            updateUserData()
+            isNotUpdated.current = false
+        }
+    }
 
     return (
         <div className='gamePanel'>
@@ -269,7 +267,7 @@ function SpeedTypingTest(props) {
                             <input ref={textInput} disabled={status !== "started"} placeholder=" " type="text" className="input input-game" onKeyDown={handleKeyDown} value={currInput} onChange={(e) => setCurrInput(e.target.value)} />
                             <div className="cut cut-game"></div>
                             <label htmlFor="emailLog" className="placeholder placeholder-game">
-                                {words[currWordIndex]}
+                                <b>{words[currWordIndex]}</b>
                             </label>
                         </div>
                         <div className="card">
@@ -292,6 +290,7 @@ function SpeedTypingTest(props) {
                 )}
                 {status === "finished" && (
                     <div className="section">
+                        <LeveLUP />
                         <div>
                             <div>
                                 <h3>Results</h3>
@@ -312,6 +311,7 @@ function SpeedTypingTest(props) {
                                 )}
                             </div>
                         </div>
+
                         <div className="section">
                             <button className='replay' onClick={playAgain}>
                                 {/* Zagraj ponownie */}

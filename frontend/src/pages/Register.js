@@ -23,7 +23,7 @@ export default function Register() {
                 document.getElementById("email").value = ""
                 document.getElementById("password").value = ""
                 document.getElementById("passwordRepeat").value = ""
-                alert("Zarejestrowałeś się poprawnie. Przeniesiesz się do logowania.")
+                alert("Registration successful. You will be moved to the Log in panel.")
                 navigate("/login")
             }
 
@@ -32,7 +32,7 @@ export default function Register() {
             document.getElementById("email").value = ""
             document.getElementById("password").value = ""
             document.getElementById("passwordRepeat").value = ""
-            alert("Login znajduje się już w bazie!")
+            alert("Nickname already exist!")
         }
 
     }
@@ -58,7 +58,7 @@ export default function Register() {
         if (password !== passwordRep) {
             document.getElementById("password").value = ""
             document.getElementById("passwordRepeat").value = ""
-            alert('Podane hasła nie są jednakowe!')
+            alert('Passwords do not match!')
         }
         else {
             registerUser()
@@ -68,8 +68,8 @@ export default function Register() {
 
     return (
         <form className="formReg" autoComplete="off" onSubmit={handleSubmit} >
-            <div className="title">Załóż konto</div>
-            <div className="subtitle">Podaj dane rejestracji</div>
+            <div className="title">Create account</div>
+            <div className="subtitle">Please enter your details</div>
             <div className="input-container ic1">
                 <input id="email" className="input" type="nickname" placeholder=" " role="presentation" autoComplete="off" onChange={(e) => { setUsername(e.target.value) }} />
                 <div className="cut"></div>
@@ -81,18 +81,18 @@ export default function Register() {
                 <input id="password" className="input" type="password" placeholder=" " onChange={(e) => { setPassword(e.target.value) }} />
                 <div className="cut cut-short"></div>
                 <label htmlFor="password" className="placeholder">
-                    Hasło
+                    Password
                 </label>
             </div>
             <div className="input-container ic2">
                 <input id="passwordRepeat" className="input" type="password" placeholder=" " onChange={(e) => { setPasswordRep(e.target.value) }} />
                 <div className="cut cut-long"></div>
                 <label htmlFor="passwordRepeat" className="placeholder">
-                    Powtórz hasło
+                    Confirm password
                 </label>
             </div>
             <button id="register" type="text" className="submit">
-                Zaloguj
+                Sign up
             </button>
         </form>
     )

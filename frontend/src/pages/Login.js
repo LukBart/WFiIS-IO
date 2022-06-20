@@ -34,7 +34,7 @@ export default function Login(props) {
                 setAuth(res.data.user)
             }
         }
-        catch (err) { alert("Zły login lub hasło!") }
+        catch (err) { alert("Wrong login or password!") }
     }
 
     const handleSubmit = (e) => {
@@ -45,8 +45,8 @@ export default function Login(props) {
 
     return (
         <form className="form" onSubmit={handleSubmit}>
-            <div className="title">Witaj</div>
-            <div className="subtitle">Podaj dane logowania</div>
+            <div className="title">Hello!</div>
+            <div className="subtitle">Sign in to your account</div>
             <div className="input-container ic1">
                 <input id="email" className="input" type="text" placeholder=" " role="presentation" autoComplete="off" onChange={(e) => { setUsername(e.target.value) }} />
                 <div className="cut"></div>
@@ -58,11 +58,11 @@ export default function Login(props) {
                 <input id="passwordLog" className="input" type="password" placeholder=" " autoComplete="off" onChange={(e) => { setPassword(e.target.value) }} />
                 <div className="cut cut-short"></div>
                 <label htmlFor="passwordLog" className="placeholder">
-                    Hasło
+                    Password
                 </label>
             </div>
             <button id="login" type="text" className="submit">
-                Zaloguj
+                Log in
             </button>
         </form>
     )
