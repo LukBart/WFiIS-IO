@@ -13,6 +13,7 @@ const NUMBER_OF_WORDS = 200
 const TIME = 20.0
 const requiredExperience = [{ level: 1, exp: 0 }, { level: 2, exp: 300 }, { level: 3, exp: 713 }, { level: 4, exp: 1200 }, { level: 5, exp: 1741 }, { level: 6, exp: 2326 }, { level: 7, exp: 2947 }, { level: 8, exp: 3600 }, { level: 9, exp: 4279 }, { level: 10, exp: 4982 }]
 const socket = io.connect(process.env.serverURL || "http://localhost:3002")
+const MAX_LEVEL = 10
 
 function SpeedTypingTestMultiplayer() {
     const [words, setWords] = useState([])
@@ -36,6 +37,7 @@ function SpeedTypingTestMultiplayer() {
     const level = useRef(0)
     const experience = useRef(0);
     const isNotUpdated = useRef(false)
+    var a = new Array()
 
     //var playersAccuracy = new Map()
     const [playersIncWords, setIncPlayersWords] = useState(new Map())
@@ -74,8 +76,6 @@ function SpeedTypingTestMultiplayer() {
             setWords(wrd)
             setPlayers(usr)
         })
-
-
     })
 
     useEffect(() => {
@@ -124,8 +124,32 @@ function SpeedTypingTestMultiplayer() {
         setStatus("waitingRoom")
     }
 
+    const getPolishWord = async () => {
+        const dataJson = JSON.stringify({
+            num_of_words: NUMBER_OF_WORDS,
+        })
+        try {
+            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/getPolishWord', dataJson, {
+                headers: { 'Content-Type': 'application/json' }
+            })
+            if (res.data.status === 'ok') {
+                for (var i = 0; i < NUMBER_OF_WORDS; i++) {
+                    a.push(res.data.word[i].word)
+                }
+            }
+        }
+        catch (err) {
+        }
+    }
+
     function generateWords() {
-        return new Array(NUMBER_OF_WORDS).fill(null).map(() => randomWords())
+        if (selectedLanguage === "pl") {
+            getPolishWord()
+            return a
+        }
+        else {
+            return new Array(NUMBER_OF_WORDS).fill(null).map(() => randomWords())
+        }
     }
 
     function start() {
@@ -213,7 +237,7 @@ function SpeedTypingTestMultiplayer() {
         setWords(generateWords())
         setPrevRoom(room)
         var rm = Math.random().toString(36).slice(2)
-        while (rm.length <= 10 || rm.length >= 12){
+        while (rm.length <= 10 || rm.length >= 12) {
             rm = Math.random().toString(36).slice(2)
         }
         setRoom(rm)
@@ -306,8 +330,7 @@ function SpeedTypingTestMultiplayer() {
         var experienceGained = wordsPerMinute * accuracyBonus
         experience.current += experienceGained
 
-
-        checkIfLeveledUp()
+        if (level.current < MAX_LEVEL) { checkIfLeveledUp() }
     }
 
     function checkIfLeveledUp() {
@@ -414,7 +437,7 @@ function SpeedTypingTestMultiplayer() {
         )
     }
 
-    function LeveLUP () {
+    function LevelUp() {
         if (isNotUpdated.current) {
             calculateUserData()
             updateUserData()
@@ -507,7 +530,7 @@ function SpeedTypingTestMultiplayer() {
                 )}
                 {status === "finished" && (
                     <div className="section">
-                        <LeveLUP />
+                        <LevelUp />
                         <GenerateResultScreen />
                         <button className='replay' onClick={playAgain}>
                             {/* Zagraj ponownie */}

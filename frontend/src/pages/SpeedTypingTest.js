@@ -8,8 +8,7 @@ import "./GamePanel.css"
 import axios from 'axios'
 const NUMBER_OF_WORDS = 200
 const TIME = 60.0
-const lang = "en"
-
+const MAX_LEVEL = 10
 
 function SpeedTypingTest(props) {
     const [words, setWords] = useState([])
@@ -217,7 +216,9 @@ function SpeedTypingTest(props) {
         }
         var experienceGained = wordsPerMinute * accuracyBonus
         experience.current += experienceGained
-        checkIfLeveledUp()
+        level.current = 2
+        if (level.current < MAX_LEVEL) { checkIfLeveledUp() }
+
     }
 
     function checkIfLeveledUp() {
@@ -237,7 +238,7 @@ function SpeedTypingTest(props) {
         }
     }
 
-    function LeveLUP () {
+    function LevelUp() {
         if (isNotUpdated.current) {
             calculateUserData()
             updateUserData()
@@ -290,7 +291,7 @@ function SpeedTypingTest(props) {
                 )}
                 {status === "finished" && (
                     <div className="section">
-                        <LeveLUP />
+                        <LevelUp />
                         <div>
                             <div>
                                 <h3>Results</h3>
