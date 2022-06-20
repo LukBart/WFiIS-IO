@@ -45,7 +45,7 @@ function SpeedTypingTest(props) {
             num_of_words: NUMBER_OF_WORDS,
         })
         try {
-            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/getPolishWord', dataJson, {
+            const res = await axios.post(("https://stt-wfiis-backend.herokuapp.com" || "http://localhost:3001") + '/api/getPolishWord', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })
             if (res.data.status === 'ok') {
@@ -159,7 +159,7 @@ function SpeedTypingTest(props) {
             username: auth.username,
         })
         try {
-            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/getUserData', dataJson, {
+            const res = await axios.post(("https://stt-wfiis-backend.herokuapp.com" || "http://localhost:3001") + '/api/getUserData', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })
             if (res.data.status === 'ok') {
@@ -178,7 +178,7 @@ function SpeedTypingTest(props) {
         })
 
         try {
-            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/updateUserData', dataJson, {
+            const res = await axios.post(("https://stt-wfiis-backend.herokuapp.com" || "http://localhost:3001") + '/api/updateUserData', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })
             if (res.data.status === 'ok') {

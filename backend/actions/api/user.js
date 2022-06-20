@@ -1,7 +1,6 @@
 const User = require('../../db/models/user')
 
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 const UserExperience = require('../../db/models/userExperience')
 const Polish_Words = require('../../db/models/polishWords')
 

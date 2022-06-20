@@ -12,8 +12,9 @@ import AuthContext from "../pages/context/AuthProvider"
 const NUMBER_OF_WORDS = 200
 const TIME = 20.0
 const requiredExperience = [{ level: 1, exp: 0 }, { level: 2, exp: 300 }, { level: 3, exp: 713 }, { level: 4, exp: 1200 }, { level: 5, exp: 1741 }, { level: 6, exp: 2326 }, { level: 7, exp: 2947 }, { level: 8, exp: 3600 }, { level: 9, exp: 4279 }, { level: 10, exp: 4982 }]
-const socket = io.connect(process.env.serverURL || "http://localhost:3002")
 const MAX_LEVEL = 10
+const socket = io.connect("https://stt-wfiis-server.herokuapp.com")
+
 
 function SpeedTypingTestMultiplayer() {
     const [words, setWords] = useState([])
@@ -273,7 +274,7 @@ function SpeedTypingTestMultiplayer() {
             username: auth.username,
         })
         try {
-            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/getUserData', dataJson, {
+            const res = await axios.post(("https://stt-wfiis-backend.herokuapp.com" || "http://localhost:3001") + '/api/getUserData', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })
             if (res.data.status === 'ok') {
@@ -292,7 +293,7 @@ function SpeedTypingTestMultiplayer() {
         })
 
         try {
-            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/updateUserData', dataJson, {
+            const res = await axios.post(("https://stt-wfiis-backend.herokuapp.com" || "http://localhost:3001") + '/api/updateUserData', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })
             if (res.data.status === 'ok') {

@@ -25,7 +25,7 @@ export default function Login(props) {
         })
         //!!!
         try {
-            const res = await axios.post((process.env.baseURL || "http://localhost:3001") + '/api/login', dataJson, {
+            const res = await axios.post(("https://stt-wfiis-backend.herokuapp.com" || "http://localhost:3001") + '/api/login', dataJson, {
                 headers: { 'Content-Type': 'application/json' }
             })/*.catch((err) => { console.log('cant find API') })*/
             // console.log(JSON.stringify(res.data.token))
