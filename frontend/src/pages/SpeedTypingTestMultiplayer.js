@@ -482,7 +482,7 @@ function SpeedTypingTestMultiplayer() {
                             <input ref={textInput} disabled={status !== "started"} placeholder=" " type="text" className="input input-game" onKeyDown={handleKeyDown} value={currInput} onChange={(e) => setCurrInput(e.target.value)} />
                             <div className="cut cut-game"></div>
                             <label htmlFor="emailLog" className="placeholder placeholder-game">
-                                {words[currWordIndex]}
+                                <b>{words[currWordIndex]}</b>
                             </label>
                         </div>
                         <div className="card">
