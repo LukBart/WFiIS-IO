@@ -10,7 +10,14 @@ export default function Settings() {
     const level = useRef(0)
     const [loading, setLoading] = useState(true);
     const experience = useRef(0)
+    const { selectedColor, setSelectedColor } = useContext(SkinContext);
+    const { selectedFont, setSelectedFont } = useContext(SkinContext);
+    const { selectedLanguage, setSelectedLanguage } = useContext(SkinContext);
 
+    const languageOptions = [
+        { value: 'en', text: "English" },
+        { value: 'pl', text: "Polish" },
+    ]
     const colorOptions = [
         { value: '#f6e9f6', text: 'Default' },
         { value: '#D8BFD8', text: 'Thistle' },
@@ -42,10 +49,17 @@ export default function Settings() {
         }, 100)
     }, [])
 
+    function createLanguageSelect() {
+        let lang = []
+        for (let i = 0; i < languageOptions.length; i++) {
+            lang.push(<option key={languageOptions[i].text} value={languageOptions[i].value}>{languageOptions[i].text}</option>)
+        }
+        return lang
+    }
     function createFontsSelect() {
         let fonts = []
         for (let i = 0; i < level.current; i++) {
-            fonts.push(<option key={fontOptions[i].text}>{fontOptions[i].value}</option>)
+            fonts.push(<option key={fontOptions[i].text} value={fontOptions[i].value}>{fontOptions[i].text}</option>)
         }
         return fonts
     }
@@ -54,7 +68,8 @@ export default function Settings() {
         let colors = []
         for (let i = 0; i < level.current; i++) {
 
-            colors.push(<option key={colorOptions[i].text}>{colorOptions[i].value}</option>)
+            colors.push(<option key={colorOptions[i].text} value={colorOptions[i].value}
+            >{colorOptions[i].text}</option >)
         }
         return colors
     }
@@ -63,9 +78,6 @@ export default function Settings() {
         getUserData()
     });
 
-    const { selectedColor, setSelectedColor } = useContext(SkinContext);
-    const { selectedFont, setSelectedFont } = useContext(SkinContext);
-
     const handleChangeColor = event => {
         setSelectedColor(event.target.value);
     };
@@ -73,6 +85,10 @@ export default function Settings() {
     const handleChangeFont = event => {
         setSelectedFont(event.target.value);
     };
+
+    const handleLanguageChange = event => {
+        setSelectedLanguage(event.target.value);
+    }
 
     const getUserData = async () => {
         const dataJson = JSON.stringify({
@@ -99,20 +115,24 @@ export default function Settings() {
         <>
             <div className='gamePanel'>
                 <div className='settingsPanel'>
-                    <p>Użytkownik</p>
+                    <p>Username</p>
                     <p className='userData'>
                         {auth.username}
                     </p>
-                    <p>Poziom</p>
+                    <p>Level</p>
                     <p className='userData'>
                         {level.current}
                     </p>
-                    <p>Doświadczenie</p>
+                    <p>Experience</p>
                     <p className='userData'>
                         {experience.current}
                     </p>
+                    <p className="languageList">
+                        <label>Language</label>
+                        <select value={selectedLanguage} onChange={handleLanguageChange}>{createLanguageSelect()}</select>
+                    </p>
                     <p className='SkinList'>
-                        <label>Kolor </label>
+                        <label>Color </label>
                         <select value={selectedColor} onChange={handleChangeColor}>
                             {createColorsSelect()}
                         </select>
@@ -124,7 +144,7 @@ export default function Settings() {
                         </select>
                     </p>
                 </div>
-            </div>
+            </div >
         </>
     )
 }

@@ -3,6 +3,7 @@ import randomWords from 'random-words'
 import * as FiIcons from "react-icons/fi"
 import { IconContext } from "react-icons"
 import AuthContext from "../pages/context/AuthProvider";
+import SkinContext from './context/SkinContext';
 import "./GamePanel.css"
 import axios from 'axios'
 const NUMBER_OF_WORDS = 200
@@ -22,7 +23,8 @@ function SpeedTypingTest(props) {
     const [incorrect, setIncorrect] = useState(0)
     const [status, setStatus] = useState("waiting")
     const textInput = useRef(null)
-    const { auth } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext)
+    const { selectedLanguage, setSelectedLanguage } = useContext(SkinContext);
     const level = useRef(0)
     const experience = useRef(0);
     var a = new Array()
@@ -68,7 +70,8 @@ function SpeedTypingTest(props) {
     }
 
     function generateWords() {
-        if (lang === "pl") {
+
+        if (selectedLanguage === "pl") {
             getPolishWord()
             return a
         }

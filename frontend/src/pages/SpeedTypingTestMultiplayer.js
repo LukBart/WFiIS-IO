@@ -6,6 +6,7 @@ import { IconContext } from "react-icons"
 import io from "socket.io-client"
 import "./GamePanel.css"
 import axios from 'axios'
+import SkinContext from './context/SkinContext';
 
 import AuthContext from "../pages/context/AuthProvider"
 const NUMBER_OF_WORDS = 200
@@ -25,7 +26,7 @@ function SpeedTypingTestMultiplayer() {
     const [incorrect, setIncorrect] = useState(0)
     const [status, setStatus] = useState("waiting")
     const textInput = useRef(null)
-
+    const { selectedLanguage, setSelectedLanguage } = useContext(SkinContext);
     const [playersWords, setPlayersWords] = useState(new Map())
     const [room, setRoom] = useState()
     const [prevRoom, setPrevRoom] = useState(false)
@@ -308,6 +309,7 @@ function SpeedTypingTestMultiplayer() {
         }
         var experienceGained = wordsPerMinute * accuracyBonus
         experience.current += experienceGained
+
 
         checkIfLeveledUp()
     }
