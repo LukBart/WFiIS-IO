@@ -9,8 +9,8 @@ export default function Logout() {
     setAuth(null);
     let navigate = useNavigate();
     useEffect(() =>{
-        setSelectedColor('--bg-color','rgb(246, 233, 246)');
-        setSelectedFont('--font','sans-serif');
+        setSelectedColor('#f6e9f6');
+        setSelectedFont('sans-serif');
     },[]);
 
     useEffect(() => {
