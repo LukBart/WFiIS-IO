@@ -9,9 +9,9 @@ import axios from 'axios'
 
 import AuthContext from "../pages/context/AuthProvider"
 const NUMBER_OF_WORDS = 200
-const TIME = 60.0
+const TIME = 20.0
 const requiredExperience = [{ level: 1, exp: 0 }, { level: 2, exp: 300 }, { level: 3, exp: 713 }, { level: 4, exp: 1200 }, { level: 5, exp: 1741 }, { level: 6, exp: 2326 }, { level: 7, exp: 2947 }, { level: 8, exp: 3600 }, { level: 9, exp: 4279 }, { level: 10, exp: 4982 }]
-const socket = io.connect("http://localhost:3002")
+const socket = io.connect(process.env.serverURL || "http://localhost:3002")
 
 function SpeedTypingTestMultiplayer() {
     const [words, setWords] = useState([])
@@ -482,7 +482,7 @@ function SpeedTypingTestMultiplayer() {
                             <input ref={textInput} disabled={status !== "started"} placeholder=" " type="text" className="input input-game" onKeyDown={handleKeyDown} value={currInput} onChange={(e) => setCurrInput(e.target.value)} />
                             <div className="cut cut-game"></div>
                             <label htmlFor="emailLog" className="placeholder placeholder-game">
-                                <b>{words[currWordIndex]}</b>
+                                {words[currWordIndex]}
                             </label>
                         </div>
                         <div className="card">

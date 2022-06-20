@@ -10,14 +10,15 @@ const roomsUsers = new Map()
 const words = new Map()
 const admins = new Map()
 
-const PORT = process.env.PORT || 3002
+const PORT = process.env.serverURL || 3002
 
 app.use(cors())
 const server = http.createServer(app)
 
-const io = new Server(server, {
+const io = 
+new Server(server, {
     cors:{
-        origin: "http://localhost:3000",
+        origin: process.env.frontURL || "http://localhost:3000",
         methods: ["GET", "POST"],
     },
 })
