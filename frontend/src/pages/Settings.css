@@ -1,8 +1,7 @@
 .settingsPanel {
     display: flex;
     flex-direction: column;
-    width: 20vw;
-    gap: 1vh;
+    width: 15vw;
     user-select: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -22,10 +21,19 @@
     padding: 8px 20px 8px;
     width: 100%;
     text-align: center;
+    margin-bottom: 2vh;
+    margin-top: 0.5vh;
 }
 
-label {
-    margin-bottom: 1vh;
+select {
+    border-bottom-width: 2px;
+    padding: 1vh;
+    border-radius: 10px;
+    text-align: center;
+    align-self: flex-end;
+    width: 15vw;
+    margin-bottom: 2vh;
+    margin-top: 0.5vh;
 }
 
 .mySelect {

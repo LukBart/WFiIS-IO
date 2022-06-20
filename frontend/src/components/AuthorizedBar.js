@@ -20,7 +20,7 @@ export default function AuthorizedBar() {
                         {AuthorizedBarElements.map((element, index) => {
                             return (
                                 <li key={index} className={element.cName}>
-                                    <Link to={element.path}>
+                                    <Link id={index} to={element.path}>
                                         {element.icon}
                                     </Link>
                                 </li>
